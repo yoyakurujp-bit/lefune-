@@ -870,29 +870,39 @@ function selectDate(dateStr, el) {
   loadTimes(dateStr);
 }
 
-function loadTimes(dateStr) {
-  const grid = document.getElementById('timeGrid');
-  grid.innerHTML = '<div class="loading"><div class="spinner"></div>確認中...</div>';
+async function loadTimes(dateStr) {
+const grid = document.getElementById('timeGrid');
+grid.innerHTML = '<div class="loading"><div class="spinner"></div>確認中...</div>';
 
-  // デモ用：ランダムで空き/満席
-  setTimeout(() => {
-    const allTimes = ["10:00","10:30","11:00","11:30","12:00","12:30","13:00","13:30","14:00","14:30","15:00","15:30","16:00","16:30","17:00","17:30","18:00"];
-    const bookedSample = [];
+try {
+const res = await fetch(
+`https://script.google.com/macros/s/AKfycbzL3it0tDWshnZoAz4tJR8_W5kQnqdHXzEK7G1WPAAi9_cHAKOrodbJ8-SSEwhOgrU6/exec?action=getAvailableTimes&date=${dateStr}&staff=${encodeURIComponent(state.selectedStaff)}`
+);
+const data = await res.json();
+const availableTimes = data.times || [];
 
-    grid.innerHTML = '';
-    allTimes.forEach(t => {
-      const slot = document.createElement('div');
-      const isBooked = bookedSample.includes(t);
-      slot.className = `time-slot ${isBooked ? 'booked' : 'available'}`;
-      slot.textContent = isBooked ? '×' : t;
+const allTimes = ["10:00","10:30","11:00","11:30","12:00","12:30",
+"13:00","13:30","14:00","14:30","15:00","15:30",
+"16:00","16:30","17:00","17:30","18:00"];
 
-      if (!isBooked) {
-        slot.onclick = () => selectTime(t, slot);
-      }
-      grid.appendChild(slot);
-    });
-  }, 600);
+grid.innerHTML = '';
+allTimes.forEach(t => {
+const slot = document.createElement('div');
+const isBooked = !availableTimes.includes(t);
+slot.className = `time-slot ${isBooked ? 'booked' : 'available'}`;
+slot.textContent = isBooked ? '×' : t;
+
+if (!isBooked) {
+slot.onclick = () => selectTime(t, slot);
 }
+grid.appendChild(slot);
+});
+} catch (e) {
+console.error('空き時間の取得に失敗:', e);
+grid.innerHTML = '<div>取得に失敗しました。再度お試しください。</div>';
+}
+}
+
 
 function selectTime(time, el) {
   document.querySelectorAll('.time-slot').forEach(s => s.classList.remove('selected'));
