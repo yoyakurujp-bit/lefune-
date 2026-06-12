@@ -941,7 +941,6 @@ async function submitReservation() {
   document.getElementById('mainBtn').textContent = '送信中...';
 
   try {
-     GAS APIに予約データを送信
      const res = await fetch(GAS_URL, {
        method: 'POST',
        body: JSON.stringify({
