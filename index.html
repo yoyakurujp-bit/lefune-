@@ -876,8 +876,9 @@ grid.innerHTML = '<div class="loading"><div class="spinner"></div>確認中...</
 
 try {
 const res = await fetch(
-`https://script.google.com/macros/s/AKfycbzL3it0tDWshnZoAz4tJR8_W5kQnqdHXzEK7G1WPAAi9_cHAKOrodbJ8-SSEwhOgrU6/exec?action=getAvailableTimes&date=${dateStr}&staff=${encodeURIComponent(state.selectedStaff.name)}`
+`https://script.google.com/macros/s/AKfycbzL3it0tDWshnZoAz4tJR8_W5kQnqdHXzEK7G1WPAAi9_cHAKOrodbJ8-SSEwhOgrU6/exec?action=getAvailableTimes&date=${dateStr}&staff=${encodeURIComponent(state.selectedStaff.name)}&menu=${encodeURIComponent(state.selectedMenu.name)}`
 );
+
 const data = await res.json();
 const availableTimes = data.times || [];
 
