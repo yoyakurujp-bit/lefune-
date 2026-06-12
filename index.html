@@ -941,18 +941,18 @@ async function submitReservation() {
   document.getElementById('mainBtn').textContent = '送信中...';
 
   try {
-    // GAS APIに予約データを送信
-    // const res = await fetch(GAS_URL, {
-    //   method: 'POST',
-    //   body: JSON.stringify({
-    //     action: 'reserve',
-    //     userId: state.userId,
-    //     menu: state.selectedMenu.name,
-    //     staff: state.selectedStaff.name,
-    //     date: state.selectedDate,
-    //     time: state.selectedTime,
-    //   })
-    // });
+     GAS APIに予約データを送信
+     const res = await fetch(GAS_URL, {
+       method: 'POST',
+       body: JSON.stringify({
+         action: 'reserve',
+         userId: state.userId,
+         menu: state.selectedMenu.name,
+         staff: state.selectedStaff.name,
+         date: state.selectedDate,
+         time: state.selectedTime,
+       })
+     });
 
     // デモ：1秒後に完了
     await new Promise(r => setTimeout(r, 1000));
