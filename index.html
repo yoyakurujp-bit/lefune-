@@ -939,6 +939,14 @@ function renderConfirm() {
       <span class="confirm-label">所要時間</span>
       <span class="confirm-value">約${m.time}分</span>
     </div>
+    <div style="margin-top:16px;">
+<label style="display:block;font-size:14px;margin-bottom:4px;">電話番号<span style="color:#e05c5c;">*必須</span></label>
+<input id="inputPhone" type="tel" placeholder="09012345678" style="width:100%;padding:10px;border:1px solid #ccc;border-radius:8px;font-size:16px;box-sizing:border-box;">
+</div>
+<div style="margin-top:12px;">
+<label style="display:block;font-size:14px;margin-bottom:4px;">メールアドレス(任意)</label>
+<input id="inputEmail" type="email" placeholder="example@mail.com" style="width:100%;padding:10px;border:1px solid #ccc;border-radius:8px;font-size:16px;box-sizing:border-box;">
+</div>
   `;
   document.getElementById('mainBtn').textContent = '予約を確定する';
   document.getElementById('mainBtn').disabled = false;
@@ -950,7 +958,15 @@ function renderConfirm() {
 async function submitReservation() {
 document.getElementById('mainBtn').disabled = true;
 document.getElementById('mainBtn').textContent = '送信中...';
-
+const phone = document.getElementById('inputPhone').value.trim();
+const email = document.getElementById('inputEmail').value.trim();
+if (!phone) {
+showToast('電話番号を入力してください');
+document.getElementById('mainBtn').disabled = false;
+document.getElementById('mainBtn').textContent = '予約を確定する';
+return;
+}
+  
 try {
 const res = await fetch(GAS_URL, {
 method: 'POST',
@@ -962,6 +978,8 @@ menu: state.selectedMenu.name,
 staff: state.selectedStaff.name,
 date: state.selectedDate,
 time: state.selectedTime,
+phone: phone,
+email: email,
 })
 });
 
