@@ -722,18 +722,19 @@ calendarDate.setDate(1);
 // 初期化
 // =============================================
 window.addEventListener('load', async () => {
-  try {
-    // LIFF初期化（実際のLIFF IDに変更してください）
-    // await liff.init({ liffId: "あなたのLIFF-ID" });
-    // if (liff.isLoggedIn()) {
-    //   const profile = await liff.getProfile();
-    //   state.userId = profile.userId;
-    // }
-    state.userId = "demo_user"; // デモ用
-    loadMenus();
-  } catch (e) {
-    loadMenus();
-  }
+try {
+await liff.init({ liffId: "2010371651-nUyE2iUZ" });
+if (!liff.isLoggedIn()) {
+liff.login();
+return;
+}
+const profile = await liff.getProfile();
+state.userId = profile.userId;
+} catch (e) {
+console.error("LIFF init error:", e);
+state.userId = "test_user";
+}
+loadMenus();
 });
 
 // =============================================
@@ -937,37 +938,38 @@ function renderConfirm() {
 // 予約送信
 // =============================================
 async function submitReservation() {
-  document.getElementById('mainBtn').disabled = true;
-  document.getElementById('mainBtn').textContent = '送信中...';
+document.getElementById('mainBtn').disabled = true;
+document.getElementById('mainBtn').textContent = '送信中...';
 
-  try {
-     const res = await fetch(GAS_URL, {
-       method: 'POST',
-       mode: 'no-cors',
-       body: JSON.stringify({
-         action: 'reserve',
-         userId: state.userId,
-         menu: state.selectedMenu.name,
-         staff: state.selectedStaff.name,
-         date: state.selectedDate,
-         time: state.selectedTime,
-       })
-     });
+try {
+const res = await fetch(GAS_URL, {
+method: 'POST',
+headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+body: JSON.stringify({
+action: 'reserve',
+userId: state.userId,
+menu: state.selectedMenu.name,
+staff: state.selectedStaff.name,
+date: state.selectedDate,
+time: state.selectedTime,
+})
+});
 
-    // デモ：1秒後に完了
-    await new Promise(r => setTimeout(r, 1000));
+const result = await res.json();
+if (!result.success) throw new Error(result.message || '予約に失敗しました');
 
-    goToPage(5);
-    document.getElementById('footer').style.display = 'none';
-    document.getElementById('completeSub').innerHTML =
-      `${state.selectedDate} ${state.selectedTime}<br>${state.selectedStaff.name} / ${state.selectedMenu.name}<br><br>前日にリマインドをお送りします`;
+goToPage(5);
+document.getElementById('footer').style.display = 'none';
+document.getElementById('completeSub').innerHTML =
+`${state.selectedDate} ${state.selectedTime}<br>${state.selectedStaff.name} / ${state.selectedMenu.name}<br><br>前日にリマインドをお送りします`;
 
-  } catch (e) {
-    showToast('エラーが発生しました。もう一度お試しください。');
-    document.getElementById('mainBtn').disabled = false;
-    document.getElementById('mainBtn').textContent = '予約を確定する';
-  }
+} catch (e) {
+showToast('エラー: ' + e.message);
+document.getElementById('mainBtn').disabled = false;
+document.getElementById('mainBtn').textContent = '予約を確定する';
 }
+}
+
 
 // =============================================
 // ナビゲーション
