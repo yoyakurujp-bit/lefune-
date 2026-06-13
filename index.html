@@ -802,7 +802,6 @@ state.selectedTime = null;
 
 // すでに日付が選ばれていたら、新しいスタッフで空き時間を取り直す
 if (state.selectedDate) {
-document.getElementById('mainBtn').disabled = true;
 loadTimes(state.selectedDate);
 }
 }
