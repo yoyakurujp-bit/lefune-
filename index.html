@@ -792,10 +792,19 @@ function loadStaff() {
 }
 
 function selectStaff(i, card, staff) {
-  document.querySelectorAll('.staff-card').forEach(c => c.classList.remove('selected'));
-  card.classList.add('selected');
-  state.selectedStaff = staff;
-  document.getElementById('mainBtn').disabled = false;
+document.querySelectorAll('.staff-card').forEach(c => c.classList.remove('selected'));
+card.classList.add('selected');
+state.selectedStaff = staff;
+document.getElementById('mainBtn').disabled = false;
+
+// スタッフを変えたら時間の選択はリセット
+state.selectedTime = null;
+
+// すでに日付が選ばれていたら、新しいスタッフで空き時間を取り直す
+if (state.selectedDate) {
+document.getElementById('mainBtn').disabled = true;
+loadTimes(state.selectedDate);
+}
 }
 
 // =============================================
